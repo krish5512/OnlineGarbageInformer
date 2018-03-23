@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en" >
+<head>
+<meta charset="UTF-8">
+<title>NagarCleaning.com-Register</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/meyer-reset/2.0/reset.min.css">
+<script src='https://cdnjs.cloudflare.com/ajax/libs/jquery/2.1.3/jquery.min.js'></script>
+<script src='https://cdnjs.cloudflare.com/ajax/libs/jquery-easing/1.3/jquery.easing.min.js'></script>
+<script src="https://www.gstatic.com/firebasejs/4.11.0/firebase.js"></script>
+<link rel="stylesheet" href="css/style.css">
+<link rel="stylesheet" type="text/css" href="js/index.js">
+</head>
+<body>
+  <!-- multistep form -->
+<form id="msform">
+  <!-- progressbar -->
+  <ul id="progressbar">
+    <li class="active">Personal Details</li>
+    <li>Address</li>
+    <li>Attach Image</li>
+</ul>
+  <!-- fieldsets -->
+<fieldset>
+    <h2 class="fs-title">Enter your Personal Details</h2>
+    <h3 class="fs-subtitle">This is step 1</h3>
+    <input type="text" name="email" placeholder="Name" id="nme" />
+    <input type="text" name="pass" placeholder="Contact No." id="cno"/>
+    <input type="text" name="cpass" placeholder="Email Address" id="eid"/>
+    <h2 class="fs-title">Enter your Address</h2>
+    <h3 class="fs-subtitle">Where can we reach you.</h3>
+    <input type="text" name="twitter" placeholder="Street Address" id="hadd"/>
+    <input type="text" name="facebook" placeholder="City" id="city" />
+    <input type="text" name="gplus" placeholder="State" id="state"/>
+    <h2 class="fs-title">Attach Image</h2>
+    <h3 class="fs-subtitle">We will never sell it</h3>
+    <h3 class="fs-subtitle"><p align="left">Upload</p></h3>
+    <input type="text" name="phone" placeholder="Phone" id="phn" />
+    <input type="text" name="address" placeholder="Address" id="address"></textarea>
+    <span>Select File</span>
+    <input type="file" id="upload" required/>  
+    <div class="upload-group">           
+    <br>
+    <input type="submit" name="submit" class="submit action-button upload-group" value="Submit" onclick="clickEvent();" />
+    <input type="button" class="action-button" value="Back" onclick="window.location.href='index.html'" /><br>
+</fieldset>
+</form>
+<script>
+	var selectedFile;
+    var config = {
+    apiKey: "AIzaSyAlpwY2e58yY5xS4pcgAbFfQE3kIqHnxAk",
+    authDomain: "finalyearproject-1519106412644.firebaseapp.com",
+    databaseURL: "https://finalyearproject-1519106412644.firebaseio.com",
+    projectId: "finalyearproject-1519106412644",
+    storageBucket: "finalyearproject-1519106412644.appspot.com",
+    messagingSenderId: "432830547061"
+  };
+  firebase.initializeApp(config);
+  var data=[];
+  var rootRef=firebase.database().ref();
+  function submitdata() {       
+  console.log("Submit to Firebase");
+  var nme= document.getElementById("nme").value;
+  var cno= document.getElementById("cno").value;
+  var eid=document.getElementById("eid").value;
+  var hadd=document.getElementById("hadd").value;
+  var city=document.getElementById("city").value;
+  var state= document.getElementById("state").value;
+  var phn= document.getElementById("phn").value;
+  var address= document.getElementById("address").value;
+  var status= document.getElementById("pending");
+   var newActivity={"nme" : nme,"cno" : cno,"eid": eid,"hadd": hadd,"city": city,"state": state,"phn": phn,
+  "address": address};
+  event.preventDefault();
+  data.push(newActivity);
+  console.log(data);
+  rootRef.set(data, function(err){
+      if(err){
+        alert("Data no go");
+      }
+      else
+      {
+        alert("Data SUBMITTED, COMPLAINT ID IS YOUR MOBILE NUMBER")
+      }
+    });
+  return false;
+}
+function clickEvent(){
+   submitdata();
+  confirmUpload();
+}
+$( document ).ready(function() {
+	$("#welcome").hide();
+	$(".upload-group").hide();
+	document.getElementById("upload").addEventListener('change', handleFileSelect, false);
+});
+function handleFileSelect(event) {
+	$(".upload-group").show();
+	selectedFile = event.target.files[0];
+};
+function confirmUpload() {
+	var metadata = {
+		contentType: 'image'
+	};
+	var uploadTask = firebase.storage().ref().child('trashimg/' + selectedFile).put(selectedFile);
+	// Register three observers:
+	// 1. 'state_changed' observer, called any time the state changes
+	// 2. Error observer, called on failure
+	// 3. Completion observer, called on successful completion
+	uploadTask.on('state_changed', function(snapshot){
+  		// Observe state change events such as progress, pause, and resume
+  		// See below for more detail
+	}, function(error) {
+  		// Handle unsuccessful uploads
+	}, function() {
+  		// Handle successful uploads on complete
+  		// For instance, get the download URL: https://firebasestorage.googleapis.com/...
+  		$(".upload-group")[0].before("Success!");
+  		$(".upload-group").hide();
+
+	});
+
+}
+</script>
+</body>
+</html>
